@@ -2,12 +2,10 @@ import React, {useState, useEffect} from "react";
 import {
     View,
     Image,
-    Button,
     StyleSheet,
     SafeAreaView,
     StatusBar,
     Text,
-    Pressable,
     Linking,
     Dimensions, 
     Platform, 
