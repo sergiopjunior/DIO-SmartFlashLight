@@ -31,6 +31,7 @@ var flashlight_mode = 1;
 var light_on = false;
 var timers = {0: {"run": false, "func": make_light, "time": 200, "timerID": 0}, 1: {"run": false, "func": null, "time": 200, "timerID": 1}};
 var last_tick = 0;
+var running = false;
 
 function getRandom(min, max) {
     return Math.random() * (max - min) + min;
@@ -96,7 +97,7 @@ function make_light(){
         default:
             light_on = false;
     }
-    
+    Torch.switchState(light_on); 
 };
 
 function mode_change(){
@@ -111,7 +112,12 @@ const App = () => {
     const [lightMode, setLightMode] = useState(light_modes[flashlight_mode]["mode"])
     const handleModeChange = () => setLightMode(light_modes[flashlight_mode]["mode"]);
     const handleChangeLight = () => setLight(light_on);
-    const toggleOnOff = () => {setIsActive(!isActive); light_on = false;};
+    const toggleOnOff = () => {
+        running = !running
+        setIsActive(running); 
+        light_on = false;
+        console.log(`Mexendo: ${running}`);
+    };
     timers[1]["func"] = () => handleChangeLight();
 
     const handlePressGoToGithub = async () => {
@@ -121,8 +127,7 @@ const App = () => {
     };
     
     useEffect(() => {
-        Torch.switchState(light && isActive);   
-
+        console.log("isAlive changed")
         for (let i = 0; i < Object.keys(timers).length; i++) {
             if (isActive && !timers[i]["run"])
             {
@@ -134,13 +139,14 @@ const App = () => {
             {         
                 BackgroundTimer.clearInterval(timers[i]["timerID"]);
                 timers[i]["run"] = false;   
-                console.log(`Clear timer: ${timers[i]["timerID"]}`);                  
+                console.log(`Clear timer: ${timers[i]["timerID"]}`); 
+                Torch.switchState(false);                  
             }
         }
       }, [isActive]);
 
     useEffect(() => {
-        const subsc = RNShake.addListener(() => setIsActive);
+        const subsc = RNShake.addListener(() => toggleOnOff());
         return () => subsc.remove();
     }, []);
 
