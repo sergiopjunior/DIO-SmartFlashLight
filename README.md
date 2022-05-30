@@ -9,6 +9,7 @@ App de lanterna inteligente, ativada pela vibração do celular (ou botão dentr
 
 #### Conceitos:
 
+- Libs Shake/Torch/BackgroundTimer
 - React Native
 - BackgroundTimer
-- useState/useEffect
+- Hook useState/useEffect

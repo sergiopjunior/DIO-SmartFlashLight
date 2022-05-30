@@ -21,6 +21,8 @@ target 'smart_flashlight' do
 
   pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
 
+  pod 'react-native-torch', :path => '../node_modules/react-native-torch'
+
   target 'smart_flashlightTests' do
     inherit! :complete
     # Pods for testing

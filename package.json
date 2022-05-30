@@ -12,7 +12,9 @@
   "dependencies": {
     "react": "17.0.2",
     "react-native": "0.68.2",
-    "react-native-background-timer": "^2.4.1"
+    "react-native-background-timer": "^2.4.1",
+    "react-native-shake": "^5.1.1",
+    "react-native-torch": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

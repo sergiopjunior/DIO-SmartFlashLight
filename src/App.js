@@ -14,16 +14,20 @@ import {
     TouchableOpacity
   } from 'react-native';
 import BackgroundTimer from "react-native-background-timer";
+import Torch from "react-native-torch";
+import RNShake from 'react-native-shake';
 
+const gitHubUrl = "https://github.com/sergiopjunior/DIO-SmartFlashLight";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const scale = SCREEN_WIDTH / 320;
 const main_bg_color = "rgba(0, 0, 0, 0.774)";
 const text_color = "white";
+const text_color2 = "gold";
 const button_color = "rgba(0, 0, 0, 0.774)";
 const flashlight_off = "../assets/icons/eco-light-off.png";
 const flashlight_on = "../assets/icons/eco-light.png";
 const light_modes = {1: {"mode": "Normal"}, 2: {"mode": "Pisca-Pisca"}, 3: {"mode": "LSD"}};
-var flashlight_mode = 3;
+var flashlight_mode = 1;
 var light_on = false;
 var timers = {0: {"run": false, "func": make_light, "time": 200, "timerID": 0}, 1: {"run": false, "func": null, "time": 200, "timerID": 1}};
 var last_tick = 0;
@@ -100,6 +104,7 @@ function mode_change(){
     //Alert.alert(`Modo da lanterna alterado para ${light_modes[flashlight_mode]["mode"]}`)
 };
 
+
 const App = () => {
     const [light, setLight] = useState(light_on);
     const [isActive, setIsActive] = useState(false);
@@ -108,8 +113,16 @@ const App = () => {
     const handleChangeLight = () => setLight(light_on);
     const toggleOnOff = () => {setIsActive(!isActive); light_on = false;};
     timers[1]["func"] = () => handleChangeLight();
+
+    const handlePressGoToGithub = async () => {
+        const res = await Linking.canOpenURL(gitHubUrl);
+        if (res)
+            await Linking.openURL(gitHubUrl);
+    };
     
     useEffect(() => {
+        Torch.switchState(light && isActive);   
+
         for (let i = 0; i < Object.keys(timers).length; i++) {
             if (isActive && !timers[i]["run"])
             {
@@ -126,6 +139,11 @@ const App = () => {
         }
       }, [isActive]);
 
+    useEffect(() => {
+        const subsc = RNShake.addListener(() => setIsActive);
+        return () => subsc.remove();
+    }, []);
+
     return (
         <SafeAreaView style={style.main}>
             <StatusBar backgroundColor={main_bg_color}/>
@@ -139,6 +157,7 @@ const App = () => {
                 <TouchableOpacity style={style.flashlight} onPress={toggleOnOff}>
                     <Image source={light && isActive ? require(flashlight_on) : require(flashlight_off)} style={style.flashlight}></Image>
                 </TouchableOpacity>
+                <Text onPress={handlePressGoToGithub} style={style.h2}>Github - Link do Projeto</Text>
             </View>       
         </SafeAreaView>
     );
@@ -168,10 +187,15 @@ const style = StyleSheet.create({
         width: "100%",
         height: "100%",
         padding: 20,
+        alignItems: "center",
     },
     h1: {
         color: text_color,
         fontSize: normalize(20),
+    },
+    h2: {
+        color: text_color2,
+        fontSize: normalize(15),
     },
     button: {
         backgroundColor: button_color,
@@ -183,6 +207,6 @@ const style = StyleSheet.create({
         resizeMode: "contain",
         width: normalize(150),
         height: normalize(150),
-        alignSelf: "center",
+        marginBottom: 15,
     },
 });
